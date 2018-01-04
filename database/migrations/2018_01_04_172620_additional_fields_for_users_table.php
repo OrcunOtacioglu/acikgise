@@ -16,6 +16,10 @@ class AdditionalFieldsForUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('surname')->after('name');
             $table->boolean('is_admin')->after('password');
+
+            $table->integer('role_id')->unsigned()->nullable()->after('is_admin');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
+
             $table->string('phone')->after('email');
             $table->string('citizenship')->after('phone');
             $table->string('identification_number')->after('phone');
@@ -36,6 +40,7 @@ class AdditionalFieldsForUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('surname');
             $table->dropColumn('is_admin');
+            $table->dropColumn('role_id');
             $table->dropColumn('phone');
             $table->dropColumn('citizenship');
             $table->dropColumn('identification_number');

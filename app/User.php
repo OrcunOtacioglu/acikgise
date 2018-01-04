@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Entities\Role;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -44,6 +46,29 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return request()->user()->is_admin;
+    }
+
+    public static function getAdmins()
+    {
+        $users = User::where('is_admin', '=', true)->get();
+
+        return $users;
+    }
+
+    public static function hasRole($roleReference)
+    {
+        $allowedRole = Role::where('reference', '=', $roleReference)->first();
+
+        if (Auth::user()->role->id == $allowedRole->id || Auth::user()->role->level < $allowedRole->level) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 
     // @TODO ADD VALIDATION TO BOTH METHODS.
